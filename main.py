@@ -1,6 +1,6 @@
+from cgitb import handler
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.pyplot import legend
 
 a = 0
 b = 10
@@ -56,6 +56,10 @@ if __name__ == '__main__':
     t = np.linspace(a, b, N + 1)
 
     parameters = [omega, k, omega_f, A]
+
+
+    # СРАВНЕНИЕ ЛИНЕЙНОЙ И НЕЛИНЕЙНОЙ МОДЕЛЕЙ
+
     y_nonlinear = rungeKutta(t, [v0, phi0], dv_nonlinear, parameters)
     y_linear = rungeKutta(t, [v0, phi0], dv_linear, parameters)
 
@@ -63,15 +67,50 @@ if __name__ == '__main__':
     axs[0].plot(t, y_nonlinear[:, 1], label="Нелинейная модель")
     axs[0].plot(t, y_linear[:, 1], label="Линейная модель")
     axs[0].set_xlabel(r"$t$, с")
-    axs[0].set_ylabel(r"$\phi$, рад")
+    axs[0].set_ylabel(r"$\varphi$, рад")
     axs[0].grid()
     axs[0].legend()
     axs[1].scatter(y_nonlinear[:, 1], y_nonlinear[:, 0], marker='.', label="Нелинейная модель")
     axs[1].scatter(y_linear[:, 1], y_linear[:, 0], marker='.', label="Линейная модель")
-    axs[1].set_xlabel(r"$\phi$, рад")
+    axs[1].set_xlabel(r"$\varphi$, рад")
     axs[1].set_ylabel(r"$v$, рад/с")
     axs[1].grid()
     axs[1].legend()
     plt.savefig("linear_nonlinear.png", bbox_inches='tight')
     plt.show()
+    plt.clf()
+    plt.close()
+
+
+    # СРАВНЕНИЕ ЛИНЕЙНОЙ И НЕЛИНЕЙНОЙ МОДЕЛЕЙ ДЛЯ РАЗНЫХ НАЧАЛЬНЫХ УГЛОВ
+
+    n_comparisons = 5
+    phi0_list = np.linspace(0.25, 1, n_comparisons)
+
+    y_nonlinear = [rungeKutta(t, [v0, phi0_list[i]], dv_nonlinear, parameters) for i in range(n_comparisons)]
+    y_linear = [rungeKutta(t, [v0, phi0_list[i]], dv_linear, parameters) for i in range(n_comparisons)]
+    legend_line_list = []
+    fig, axs = plt.subplots(n_comparisons, 1, figsize=(7, 12))
+    for i in range(n_comparisons):
+        if i == 0:
+            line1 = axs[i].plot(t, y_nonlinear[i][:, 1], label="Нелинейная модель")
+            line2 = axs[i].plot(t, y_linear[i][:, 1], label="Линейная модель")
+            legend_line_list = [line1, line2]
+        else:
+            axs[i].plot(t, y_nonlinear[i][:, 1])
+            axs[i].plot(t, y_linear[i][:, 1])
+        axs[i].set_xlabel(r"$t$, с")
+        axs[i].set_ylabel(r"$\varphi$, рад")
+        axs[i].grid()
+
+        empty_line, = axs[i].plot([], [], ' ', label=rf"$\varphi_0 =$ {phi0_list[i]} рад")
+        pseudo_title = axs[i].legend(handles=[empty_line], handlelength=0, handletextpad=0, loc='right')
+        axs[i].add_artist(pseudo_title)
+
+    fig.legend(handles=[l[0] for l in legend_line_list], loc='outside right upper')
+    fig.savefig("lin_nonlin_4_phis.png", bbox_inches='tight')
+    plt.show()
+    plt.clf()
+    plt.close()
+
 
