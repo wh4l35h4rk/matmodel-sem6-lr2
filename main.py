@@ -203,7 +203,7 @@ if __name__ == '__main__':
 
     k = 0.05
     A = 1
-    omega_f = 9
+    omega_f = 3
     parameters = [omega, k, omega_f, A]
 
     fig, axs = plt.subplots(2, 2, figsize=(10, 10))
