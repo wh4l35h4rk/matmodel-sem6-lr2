@@ -76,7 +76,7 @@ if __name__ == '__main__':
     axs[1].grid()
     axs[1].legend()
     plt.savefig("linear_nonlinear.png", bbox_inches='tight')
-    # plt.show()
+    plt.show()
     plt.clf()
     plt.close()
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
     fig.legend(handles=[l[0] for l in legend_line_list], loc='outside right lower')
     fig.savefig("lin_nonlin_4_phis.png", bbox_inches='tight')
-    # plt.show()
+    plt.show()
     plt.clf()
     plt.close()
 
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     axs[1].grid()
     axs[1].legend()
     plt.savefig(f"with_k_{k}.png", bbox_inches='tight')
-    # plt.show()
+    plt.show()
     plt.clf()
     plt.close()
 
@@ -159,7 +159,7 @@ if __name__ == '__main__':
     axs[1].grid()
     axs[1].legend()
     plt.savefig(f"with_k_{k}.png", bbox_inches='tight')
-    # plt.show()
+    plt.show()
     plt.clf()
     plt.close()
 
@@ -223,6 +223,46 @@ if __name__ == '__main__':
         axs[i, 1].grid()
 
     plt.savefig(f"beating.png", bbox_inches='tight')
+    plt.show()
+    plt.clf()
+    plt.close()
+
+
+    # РЕЗОНАНС
+
+    N_omegas_third = 7
+    d = 0.3
+
+    omega_f_left = np.linspace(omega - 2, omega - d, N_omegas_third)
+    omega_f_center = np.linspace(omega - d, omega + d, N_omegas_third * 2)
+    omega_f_right = np.linspace(omega + d, omega + 2, N_omegas_third)
+
+    omega_f_list = np.concatenate([omega_f_left, omega_f_center, omega_f_right])
+    omega_f_list = np.unique(omega_f_list)
+
+    N_omegas = len(omega_f_list)
+
+    a = 0
+    b = 100
+    N = 700
+    t = np.linspace(a, b, N + 1)
+
+    k = 0
+    A = 0.5
+
+    ampl_list = np.zeros(N_omegas)
+    for i in range(N_omegas):
+        parameters = [omega, k, omega_f_list[i], A]
+        y_linear = rungeKutta(t, [v0, phi0], dv_linear, parameters)
+        ampl_list[i] = max(abs(y_linear[:, 1]))
+
+    plt.vlines(omega, 0, max(ampl_list) + 0.3, linestyles="dashed", color="orange", label=r"Резонанс, $\omega_f = \omega$")
+    plt.plot(omega_f_list, ampl_list, label="Резонансная кривая")
+    plt.xlabel(r"$\omega_f, рад/с$")
+    plt.ylabel(r"$\varphi, рад$")
+    plt.grid()
+    plt.legend()
+    plt.savefig("resonance.png", bbox_inches='tight')
     plt.show()
     plt.clf()
     plt.close()
