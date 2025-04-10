@@ -76,7 +76,7 @@ if __name__ == '__main__':
     axs[1].grid()
     axs[1].legend()
     plt.savefig("linear_nonlinear.png", bbox_inches='tight')
-    plt.show()
+    # plt.show()
     plt.clf()
     plt.close()
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
     fig.legend(handles=[l[0] for l in legend_line_list], loc='outside right lower')
     fig.savefig("lin_nonlin_4_phis.png", bbox_inches='tight')
-    plt.show()
+    # plt.show()
     plt.clf()
     plt.close()
 
@@ -132,10 +132,15 @@ if __name__ == '__main__':
     axs[1].grid()
     axs[1].legend()
     plt.savefig(f"with_k_{k}.png", bbox_inches='tight')
-    plt.show()
+    # plt.show()
     plt.clf()
     plt.close()
 
+
+    a = 0
+    b = 20
+    N = 300
+    t = np.linspace(a, b, N + 1)
 
     k = 0.6
     parameters = [omega, k, omega_f, A]
@@ -154,33 +159,70 @@ if __name__ == '__main__':
     axs[1].grid()
     axs[1].legend()
     plt.savefig(f"with_k_{k}.png", bbox_inches='tight')
-    plt.show()
+    # plt.show()
     plt.clf()
     plt.close()
 
 
     # ВЫНУЖДАЮЩАЯ СИЛА
 
-    k = 0.2
-    A = 0.5
-    omega_f = 6
+    a = 0
+    b = 20
+    N = 300
+    t = np.linspace(a, b, N + 1)
+
+    phi0 = 0.1
+
+    k = 0.1
+    A = 0.3
+    omega_f = 5
 
     parameters = [omega, k, omega_f, A]
     y_linear = rungeKutta(t, [v0, phi0], dv_nonlinear, parameters)
 
     fig, axs = plt.subplots(1, 2, figsize=(12, 5))
-    axs[0].plot(t, y_linear[:, 1], label=rf"$k = {k}$" + r"$c^{-1}$", color="violet")
-    axs[1].scatter(y_linear[:, 1], y_linear[:, 0], marker='.', label=rf"$k = {k}$" + r"$c^{-1}$", color="violet")
-
+    axs[0].plot(t, y_linear[:, 1], color="violet")
+    axs[1].scatter(y_linear[:, 1], y_linear[:, 0], marker='.', color="violet")
     axs[0].set_xlabel(r"$t$, с")
     axs[0].set_ylabel(r"$\varphi$, рад")
     axs[0].grid()
-    axs[0].legend()
     axs[1].set_xlabel(r"$\varphi$, рад")
     axs[1].set_ylabel(r"$v$, рад/с")
     axs[1].grid()
-    axs[1].legend()
     plt.savefig(f"driving_force.png", bbox_inches='tight')
+    plt.show()
+    plt.clf()
+    plt.close()
+
+
+    # БИЕНИЕ
+
+    a = 0
+    b_list = [60, 120]
+    N = 300
+
+    k = 0.05
+    A = 1
+    omega_f = 9
+    parameters = [omega, k, omega_f, A]
+
+    fig, axs = plt.subplots(2, 2, figsize=(10, 10))
+
+    for i in range(len(b_list)):
+        t = np.linspace(a, b_list[i], N + 1)
+        y_linear = rungeKutta(t, [v0, phi0], dv_nonlinear, parameters)
+
+        axs[i, 0].plot(t, y_linear[:, 1], color="violet")
+        axs[i, 1].scatter(y_linear[:, 1], y_linear[:, 0], marker='.', color="violet")
+
+        axs[i, 0].set_xlabel(r"$t$, с")
+        axs[i, 0].set_ylabel(r"$\varphi$, рад")
+        axs[i, 0].grid()
+        axs[i, 1].set_xlabel(r"$\varphi$, рад")
+        axs[i, 1].set_ylabel(r"$v$, рад/с")
+        axs[i, 1].grid()
+
+    plt.savefig(f"beating.png", bbox_inches='tight')
     plt.show()
     plt.clf()
     plt.close()
