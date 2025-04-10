@@ -2,11 +2,6 @@ from cgitb import handler
 import matplotlib.pyplot as plt
 import numpy as np
 
-a = 0
-b = 10
-N = 150
-h = (b - a) / N
-
 
 def dv_linear(t, v, phi, omega, k, omega_f, A):
     return -k * v - omega**2 * phi + A * np.sin(omega_f * t)
@@ -26,6 +21,7 @@ def func(dv_type, t, func_values, omega, k=0, omega_f=0, A=0):
 
 
 def rungeKutta(x, start_conditions, dv_type, param_list):
+    h = (x[len(x) - 1] - x[0]) / len(x)
     y = np.zeros((1, len(start_conditions)))
     y[0] = start_conditions
 
@@ -53,6 +49,9 @@ if __name__ == '__main__':
     g = 9.8
     omega = (g / L)**0.5
 
+    a = 0
+    b = 10
+    N = 150
     t = np.linspace(a, b, N + 1)
 
     parameters = [omega, k, omega_f, A]
@@ -77,7 +76,7 @@ if __name__ == '__main__':
     axs[1].grid()
     axs[1].legend()
     plt.savefig("linear_nonlinear.png", bbox_inches='tight')
-    # plt.show()
+    plt.show()
     plt.clf()
     plt.close()
 
@@ -133,7 +132,7 @@ if __name__ == '__main__':
     axs[1].grid()
     axs[1].legend()
     plt.savefig(f"with_k_{k}.png", bbox_inches='tight')
-    # plt.show()
+    plt.show()
     plt.clf()
     plt.close()
 
@@ -155,7 +154,7 @@ if __name__ == '__main__':
     axs[1].grid()
     axs[1].legend()
     plt.savefig(f"with_k_{k}.png", bbox_inches='tight')
-    # plt.show()
+    plt.show()
     plt.clf()
     plt.close()
 
